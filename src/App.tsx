@@ -4,6 +4,8 @@ import './index.css';
 import Navbar from './Components/Navbar';
 import BMI_Calculate from './Components/BMI_Calculate';
 import Weather from './Components/Weather';
+import { CounterProvider } from './Context/CounterContext';
+
 interface ContactFormData {
   name: string;
   email: string;
@@ -58,7 +60,7 @@ const Home: React.FC = () => {
       <section className="min-h-screen flex flex-col items-center justify-center text-center p-6">
         <h1 className="text-5xl font-bold mb-4">Welcome to MySite!</h1>
         <p className="text-lg mb-6 max-w-2xl">This is a simple homepage built using React and Tailwind CSS.</p>
-        
+
         <div className="flex space-x-4 mt-6">
           <Link to="/bmi-calculate">
             <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
@@ -73,6 +75,7 @@ const Home: React.FC = () => {
           </Link>
         </div>
       </section>
+
       {/* About Us Section */}
       <section id="about" className="min-h-screen flex flex-col items-center justify-center p-6 bg-white">
         <div className="max-w-4xl mx-auto">
@@ -106,11 +109,9 @@ const Home: React.FC = () => {
           <h2 className="text-4xl font-bold mb-6 text-center">Contact Us</h2>
           <form onSubmit={handleContactSubmit} className="bg-white shadow-md rounded-lg p-8">
             <div className="mb-4">
-              <label className="block text-gray-7 text-sm font-bold mb-2" htmlFor="name">
-                Name
-              </label>
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">Name</label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
                 id="name"
                 name="name"
                 type="text"
@@ -121,11 +122,9 @@ const Home: React.FC = () => {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                Email
-              </label>
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">Email</label>
               <input
-                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${
                   contactEmailError ? 'border-red-500' : ''
                 }`}
                 id="email"
@@ -141,11 +140,9 @@ const Home: React.FC = () => {
               )}
             </div>
             <div className="mb-6">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="message">
-                Message
-              </label>
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="message">Message</label>
               <textarea
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
                 id="message"
                 name="message"
                 value={contactForm.message}
@@ -157,11 +154,9 @@ const Home: React.FC = () => {
             </div>
             <div className="flex items-center justify-center">
               <button
-                className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
-                  isContactSubmitting
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700'
-                } text-white`}
+                className={`font-bold py-2 px-4 rounded focus:outline-none text-white ${
+                  isContactSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                }`}
                 type="submit"
                 disabled={isContactSubmitting}
               >
@@ -179,18 +174,21 @@ const Home: React.FC = () => {
   );
 };
 
+// ✅ Wrap the whole App with CounterProvider
 const App: React.FC = () => {
   return (
-    <Router>
-      <div className="min-h-screen flex flex-col bg-gray-50 text-gray-900">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/bmi-calculate" element={<BMI_Calculate />} />
-          <Route path="/weather" element ={<Weather/>} />
-        </Routes>
-      </div>
-    </Router>
+    <CounterProvider>
+      <Router>
+        <div className="min-h-screen flex flex-col bg-gray-50 text-gray-900">
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/bmi-calculate" element={<BMI_Calculate />} />
+            <Route path="/weather" element={<Weather />} />
+          </Routes>
+        </div>
+      </Router>
+    </CounterProvider>
   );
 };
 
