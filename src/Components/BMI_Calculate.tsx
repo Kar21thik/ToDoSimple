@@ -1,65 +1,24 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
-import { useCounter } from "../Context/CounterContext";
+import React from "react";
+import { useCounter } from "../Context/CounterContext"; // accessing global counter
+import { useBmiCalculator } from "./hooks/bmi-managament"; // custom BMI hook
 
 const BMI_Calculate: React.FC = () => {
-  const [height, setHeight] = useState<string>("");
-  const [weight, setWeight] = useState<string>("");
-  const [bmi, setBmi] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    height,
+    setHeight,
+    weight,
+    setWeight,
+    bmi,
+    error,
+    heightRef,
+    calculateBMI,
+    interpretation,
+  } = useBmiCalculator();
+
   const { count, incrementCount } = useCounter();
 
-  const heightRef = useRef<HTMLInputElement>(null);
-
-  // Focus height input on load
-  useEffect(() => {
-    heightRef.current?.focus();
-  }, []);
-
-  // Calculate BMI
-  const calculateBMI = () => {
-    setError(null);
-    setBmi(null);
-
-    if (!height || !weight) {
-      setError("Please enter both height and weight.");
-      return;
-    }
-
-    const h = parseFloat(height);
-    const w = parseFloat(weight);
-
-    if (isNaN(h) || isNaN(w) || h <= 0 || w <= 0) {
-      setError("Please enter valid numbers greater than 0.");
-      return;
-    }
-
-    const heightInMeters = h / 100;
-    const bmiValue = (w / (heightInMeters * heightInMeters)).toFixed(3);
-    setBmi(bmiValue);
-  };
-
-  // Log BMI on update
-  useEffect(() => {
-    if (bmi) {
-      console.log(`New BMI calculated: ${bmi}`);
-    }
-  }, [bmi]);
-
-  // Memoized BMI interpretation
-  const interpretation = useMemo(() => {
-    if (!bmi) return null;
-
-    const value = parseFloat(bmi);
-    if (value < 18.5) return "Underweight";
-    if (value < 25) return "Normal weight";
-    if (value < 30) return "Overweight";
-    return "Obese";
-  }, [bmi]);
-
   return (
-    // Fixed height container with scrolling
     <div className="h-screen pt-16 pb-4 px-4 flex flex-col items-center overflow-y-auto bg-gray-50 text-gray-900">
-      {/* Content container with max width */}
       <div className="w-full max-w-md">
         {/* BMI Calculator Card */}
         <div className="bg-white shadow-lg rounded-lg p-8 mb-6">
@@ -106,7 +65,7 @@ const BMI_Calculate: React.FC = () => {
             </button>
           </div>
 
-          {/* Error */}
+          {/* Error message */}
           {error && <p className="text-red-500 text-center">{error}</p>}
 
           {/* Result */}
@@ -131,10 +90,6 @@ const BMI_Calculate: React.FC = () => {
             <p className="text-lg font-medium">Current Count: {count}</p>
           </div>
         </div>
-
-        
-
-        
       </div>
     </div>
   );

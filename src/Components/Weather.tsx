@@ -1,29 +1,19 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '../Redux/store';
-import { setCity, fetchWeather } from '../Redux/weatherSlice';
+import React from 'react';
+import { useWeather } from './hooks/useWeather';
 import { useCounter } from '../Context/CounterContext';
 
 const Weather: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  
-  // Redux state for weather
-  const city = useSelector((state: RootState) => state.weather.city);
-  const weatherData = useSelector((state: RootState) => state.weather.data);
-  const error = useSelector((state: RootState) => state.weather.error);
+  // Custom hook for weather functionality
+  const { 
+    city, 
+    weatherData, 
+    error, 
+    handleCityChange, 
+    handleSearch 
+  } = useWeather();
 
   // useContext for counter
   const { count, incrementCount } = useCounter();
-
-  const handleSearch = () => {
-    if (!city.trim()) return;
-    dispatch(fetchWeather(city));
-  };
-
-  useEffect(() => {
-    dispatch(setCity('Bangalore'));
-    dispatch(fetchWeather('Bangalore'));
-  }, [dispatch]);
 
   return (
     // Main container with scrolling enabled
@@ -35,7 +25,7 @@ const Weather: React.FC = () => {
         <input
           type="text"
           value={city}
-          onChange={(e) => dispatch(setCity(e.target.value))}
+          onChange={(e) => handleCityChange(e.target.value)}
           placeholder="e.g., Delhi or London,UK"
           className="p-2 rounded border border-gray-400 w-64 mb-4 text-center"
         />
@@ -47,6 +37,8 @@ const Weather: React.FC = () => {
           Get Weather
         </button>
 
+   {/* {loading && <p className="mt-4">Loading weather data...</p>} */}
+        
         {error && <p className="text-red-600 mt-4">{error}</p>}
 
         {weatherData && (
